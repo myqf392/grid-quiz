@@ -1,0 +1,16 @@
+{
+  "name": "电网刷题",
+  "short_name": "电网刷题",
+  "description": "国家电网招聘考试公共与行业知识题库刷题",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f5f7fb",
+  "theme_color": "#0B5FFF",
+  "icons": [
+    { "src": "icons/pwa-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/pwa-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/pwa-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
