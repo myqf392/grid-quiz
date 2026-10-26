@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0B5FFF">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="电网刷题">
+  <meta name="mobile-web-app-capable" content="yes">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/pwa-192.png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <title>电网刷题</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="app">
+    <!-- 首页 -->
+    <section id="screen-home" class="screen active">
+      <header class="home-header">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 4.8 13.2h5.4L10 22l8.4-11.4h-5.6L13 2Z"/></svg>
+          </div>
+          <div>
+            <h1>电网刷题</h1>
+            <p id="bank-summary">2027版题库</p>
+          </div>
+        </div>
+        <button type="button" class="icon-btn" data-theme-toggle aria-label="切换深色模式">
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        </button>
+      </header>
+
+      <main class="home-main">
+        <section class="overview-card" aria-label="学习概览">
+          <div class="ring">
+            <svg viewBox="0 0 120 120" aria-hidden="true">
+              <defs>
+                <linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#0B5FFF"/>
+                  <stop offset="100%" stop-color="#25C2E0"/>
+                </linearGradient>
+              </defs>
+              <circle class="ring-bg" cx="60" cy="60" r="52"/>
+              <circle class="ring-fg" id="ring-fg" cx="60" cy="60" r="52" stroke="url(#ringGrad)"/>
+            </svg>
+            <div class="ring-center">
+              <strong id="home-progress">0%</strong>
+              <span>总进度</span>
+            </div>
+          </div>
+          <div class="overview-stats">
+            <div class="stat"><span>已练题数</span><strong id="stat-attempted">0</strong></div>
+            <div class="stat"><span>正确率</span><strong id="stat-accuracy" class="accent">--</strong></div>
+            <div class="stat"><span>错题数</span><strong id="stat-wrong">0</strong></div>
+          </div>
+        </section>
+
+        <p class="section-label">五个部分 · 点击进入</p>
+        <div id="part-list" class="part-list"></div>
+
+        <p class="section-label">错题复习</p>
+        <button type="button" class="mode-card" id="start-wrong">
+          <span class="mode-icon wrong" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5"/><path d="M12 16h.01"/></svg>
+          </span>
+          <span class="mode-body">
+            <span class="mode-title">错题本</span>
+            <span class="mode-desc">五个部分分开整理 · 只在错题本中手动移除</span>
+          </span>
+          <span class="mode-badge" id="wrong-badge" hidden>0</span>
+          <span class="mode-chevron" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
+          </span>
+        </button>
+
+        <p class="home-tip">答错自动进入错题本 · 答对不会自动移除</p>
+      </main>
+    </section>
+
+    <!-- 部分练习页 -->
+    <section id="screen-part" class="screen">
+      <header class="session-header">
+        <button type="button" class="icon-btn" id="part-back" aria-label="返回首页">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        </button>
+        <div class="session-title">
+          <h2 id="part-title">部分练习</h2>
+          <span id="part-subtitle"></span>
+        </div>
+        <button type="button" class="icon-btn" data-theme-toggle aria-label="切换深色模式">
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        </button>
+      </header>
+
+      <main class="part-main">
+        <section class="part-hero" id="part-hero">
+          <div class="hero-head">
+            <span class="part-badge" id="part-hero-badge"></span>
+            <div class="hero-info">
+              <strong id="part-hero-name"></strong>
+              <p id="part-hero-desc"></p>
+            </div>
+            <span class="hero-percent" id="part-percent">0%</span>
+          </div>
+          <div class="hero-bar"><i id="part-progress-bar"></i></div>
+          <div class="hero-stats">
+            <div class="hero-stat"><span>已练</span><strong id="part-attempted">0</strong></div>
+            <div class="hero-stat"><span>正确率</span><strong id="part-accuracy">--</strong></div>
+            <div class="hero-stat"><span>错题</span><strong id="part-wrong-stat">0</strong></div>
+          </div>
+        </section>
+
+        <p class="section-label">选择题型</p>
+        <div class="chips" id="type-chips"></div>
+
+        <p class="section-label">开始练习</p>
+        <button type="button" class="mode-card primary" id="part-answer">
+          <span class="primary-top">
+            <span class="mode-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+            </span>
+            <span class="mode-body">
+              <span class="mode-title">答题模式</span>
+              <span class="mode-desc" id="part-answer-desc">选完立即判对错</span>
+            </span>
+            <span class="mode-chevron" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
+            </span>
+          </span>
+          <span class="primary-cta">
+            <span id="part-answer-cta">从头开始</span>
+            <span class="cta-arrow">进入</span>
+          </span>
+        </button>
+
+        <button type="button" class="mode-card" id="part-study">
+          <span class="mode-icon study" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2Z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7Z"/></svg>
+          </span>
+          <span class="mode-body">
+            <span class="mode-title">背题模式</span>
+            <span class="mode-desc" id="part-study-desc">题目与答案同屏，快速过一遍</span>
+          </span>
+          <span class="mode-chevron" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
+          </span>
+        </button>
+
+        <button type="button" class="mode-card" id="part-wrong">
+          <span class="mode-icon wrong" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5"/><path d="M12 16h.01"/></svg>
+          </span>
+          <span class="mode-body">
+            <span class="mode-title">本部分错题本</span>
+            <span class="mode-desc" id="part-wrong-desc">本部分错题单独整理</span>
+          </span>
+          <span class="mode-badge" id="part-wrong-badge" hidden>0</span>
+          <span class="mode-chevron" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
+          </span>
+        </button>
+      </main>
+    </section>
+
+    <!-- 练习页 -->
+    <section id="screen-session" class="screen">
+      <header class="session-header">
+        <button type="button" class="icon-btn" id="session-back" aria-label="返回">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        </button>
+        <div class="session-title">
+          <h2 id="session-mode-title">答题模式</h2>
+          <span id="session-progress-text">第 1 / 1 题</span>
+        </div>
+        <button type="button" class="icon-btn" data-theme-toggle aria-label="切换深色模式">
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        </button>
+      </header>
+      <div class="progress-track"><div id="session-progress-bar"></div></div>
+      <main class="session-main">
+        <article class="question-card">
+          <div class="question-meta">
+            <span class="tag" id="q-part">部分</span>
+            <span class="tag type" id="q-type">单选题</span>
+            <span class="q-index" id="q-index">第 1 题</span>
+          </div>
+          <h3 class="q-stem" id="q-stem"></h3>
+          <div class="options" id="options"></div>
+          <div class="feedback" id="feedback"></div>
+        </article>
+      </main>
+      <footer class="session-footer">
+        <button type="button" class="btn" id="prev-btn">上一题</button>
+        <button type="button" class="btn primary" id="submit-btn" hidden>提交答案</button>
+        <button type="button" class="btn primary" id="next-btn">下一题</button>
+      </footer>
+    </section>
+
+    <!-- 错题本 -->
+    <section id="screen-wrong" class="screen">
+      <header class="session-header">
+        <button type="button" class="icon-btn" id="wrong-back" aria-label="返回">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        </button>
+        <div class="session-title">
+          <h2>错题本</h2>
+          <span id="wrong-count-text">0 道</span>
+        </div>
+        <button type="button" class="icon-btn" data-theme-toggle aria-label="切换深色模式">
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        </button>
+      </header>
+      <main class="wrong-main">
+        <section class="wrong-summary">
+          <div class="wrong-summary-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5"/><path d="M12 16h.01"/></svg>
+          </div>
+          <div>
+            <strong><span id="wrong-summary-count">0</span> 道错题待巩固</strong>
+            <p>答对不会自动移除，请在列表中手动移除</p>
+          </div>
+        </section>
+
+        <p class="section-label">按部分筛选</p>
+        <div class="chips" id="wrong-part-chips"></div>
+
+        <p class="section-label">按题型筛选</p>
+        <div class="chips" id="wrong-type-chips"></div>
+
+        <button type="button" class="btn primary btn-block" id="start-wrong-practice">开始重练</button>
+        <div id="wrong-list"></div>
+        <button type="button" class="text-btn danger" id="clear-wrong" hidden>清空错题本</button>
+      </main>
+    </section>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  </div>
+
+  <script src="js/questions.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", function () {
+        navigator.serviceWorker.register("sw.js").catch(function () {});
+      });
+    }
+  </script>
+</body>
+</html>
